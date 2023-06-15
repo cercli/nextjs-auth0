@@ -77,13 +77,13 @@ export default function withMiddlewareAuthRequiredFactory(
 
       if (res) {
         const headers = new Headers(res.headers);
-        const cookies = headers.get('set-cookie')?.split(', ') || [];
-        console.log('🚀 ~ file: with-middleware-auth-required.ts:81 ~ wrappedMiddleware ~ cookies:', cookies);
+        const resCookies = headers.get('set-cookie')?.split(', ') || [];
         const authCookies = authRes.headers.get('set-cookie')?.split(', ') || [];
-        if (cookies.length || authCookies.length) {
-          [...authCookies, ...cookies].forEach((cookie) => {
-            headers.set('set-cookie', cookie);
-          });
+
+        const cookies = [...resCookies, ...authCookies].join(', ');
+
+        if (cookies.length) {
+          headers.set('set-cookie', cookies);
         }
         return NextResponse.next({ ...res, status: res.status, headers });
       } else {
