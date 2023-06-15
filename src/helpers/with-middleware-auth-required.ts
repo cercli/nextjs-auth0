@@ -78,9 +78,12 @@ export default function withMiddlewareAuthRequiredFactory(
       if (res) {
         const headers = new Headers(res.headers);
         const cookies = headers.get('set-cookie')?.split(', ') || [];
+        console.log('🚀 ~ file: with-middleware-auth-required.ts:81 ~ wrappedMiddleware ~ cookies:', cookies);
         const authCookies = authRes.headers.get('set-cookie')?.split(', ') || [];
         if (cookies.length || authCookies.length) {
-          headers.set('set-cookie', [...authCookies, ...cookies].join(', '));
+          [...authCookies, ...cookies].forEach((cookie) => {
+            headers.set('set-cookie', cookie);
+          });
         }
         return NextResponse.next({ ...res, status: res.status, headers });
       } else {
